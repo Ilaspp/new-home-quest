@@ -1,0 +1,286 @@
+<!--Struttura file HTML-----------------
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Titolo della pagina</title>
+  </head>
+  <body>
+    <h1>Benvenuto</h1>
+    <p>Questo è un paragrafo di esempio.</p>
+  </body>
+</html>--------------- -->
+
+
+
+<!--index.html → cosa appare
+style.css → come appare
+script.js → cosa fa-->
+
+
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="icon.jpeg">
+    <link rel="manifest" href="manifest.json">
+
+    <title>New Home Quest</title>
+
+    <link rel="stylesheet" href="style.css">
+
+
+</head>
+
+<body>
+
+    <div id="welcomeScreen" class="screen">       <!--schermata iniziale-->
+
+        <h1> New Home Quest</h1>
+
+        <p>Una nuova avventura ti attende</p>
+
+<div id="countdown"></div>
+
+        <button id="startButton">A bordo, ciurma!</button>   <!--crea il pulsante inizio-->
+    </div>                         <!--div, contenitore permette di raggruppare elementi-->
+
+    <div id="adventureScreen" class="screen">     <!--seconda schermata-->
+
+        <h1> Ahoy, Capitan Andrea</h1>
+
+        <p> Riunisci l'equipaggio</p>
+                               
+        <p>Chiara — Primo Ufficiale</p>
+
+        <p>Oscarino — Gatto di bordo</p>
+
+        <button id="continueButton">A bordo, ciurma!</button>
+    </div>
+
+    <div id="homeScreen" class="screen">
+
+    <h1>New Home Quest</h1>
+
+    <h2>Capitan Andrea</h2>
+
+    <p>☠️ BOUNTY: <span id="bountyDisplay">0</span></p>
+
+    <p>⚡ XP: <span id="xpDisplay">0</span> / 2500</p>
+
+<div class="xpBar"> 
+    <div id="xpProgress"></div>
+</div>
+
+<div id="dailyReminder"> 
+
+    <h3>📜 Promemoria del Capitano</h3> 
+
+    <p id="reminderText"> 
+        Capitano c'è una missione per te. 
+    </p> 
+
+    <button id="reminderButton"> 
+        Sei pronto a salpare? 
+    </button> 
+
+</div>
+
+<p id="nextReward">Prossimo traguardo: 100 XP</p>
+
+<button id="notificationButton">
+    🔔 Attiva notifiche
+</button>
+
+<hr>
+
+<button id="missionsButton">🏴‍☠️ Missioni</button>
+
+    <button id="treasuresButton">💰 Tesori</button>
+
+    <button id="catButton">🐈 Nostromo Peloso</button>
+    <div id="catMission"></div>
+
+    <div id="missionsScreen">
+        <h2>🏴‍☠️ Missioni</h2>
+        <p id="missionCounter">Missioni completate: 0 / 25</p>
+        <div id="categoryFilters">
+
+    <button data-category="all">🏴‍☠️ Tutte</button>
+    <button data-category="salpare">📦 Ponte di Comando</button>
+    <button data-category="ponte">🪑 Quadrato</button>
+    <button data-category="cambusa">🍳 Cambusa</button>
+    <button data-category="cabina">🌙 Cabina del Capitano</button>
+    <button data-category="bocca di lupo">🧽 Testa</button>
+
+</div>
+        <div id="missionsList"></div>   <!--contenitore vuoto cosi javascript mette dentr missioni-->
+</div>
+
+<div id="treasuresScreen">
+    <h2>💰 Tesori</h2>
+
+    <div id="treasuresList"></div>
+</div>
+
+</div>
+
+
+<div id="treasureOverlay">
+
+    <div id="treasurePopup">
+
+    <div id="treasureChest">🪎</div>
+
+    <h2 id="normalTreasureTitle">TESORO SBLOCCATO!</h2>
+    <h2 id="finalTreasureTitle">Il one piece...esiste davvero!</h2>
+
+    <h3 id="treasureUnlockedTitle"></h3>
+
+    <p id="treasureUnlockedDescription"></p>
+
+    <button id="closeTreasureButton">
+        Continua l'avventura
+    </button>
+
+</div>
+
+</div>
+
+<div id="finalTransition">
+
+    <div id="fallingTreasures"></div>
+
+</div>
+
+
+<!-- DIARIO DI BORDO -->
+
+<div id="diaryScreen" class="screen" style="display: none;">
+
+    <h1>📖 Diario di Bordo</h1>
+
+    <h2>🏴‍☠️ Capitan Andrea</h2>
+
+<p>
+    🏁 Avventura completata il
+    <strong id="diaryCompletionDate"></strong>
+</p>
+
+    <p>🧡 Chiara — Primo Ufficiale</p>
+
+    <p>🐈 Oscarino — Nostromo di bordo</p>
+
+    <hr>
+
+    <h3>⚓ Il viaggio</h3>
+
+    <p>
+        Missioni completate:
+        <strong id="diaryMissions">0 / 25</strong>
+    </p>
+
+    <p>
+        Missioni di Oscarino:
+        <strong id="diaryCatMissions">0 / 6</strong>
+    </p>
+
+    <p>
+        💰 Tesori conquistati:
+        <strong id="diaryTreasures">0 / 7</strong>
+    </p>
+
+    <p>
+        ⚡ XP:
+        <strong id="diaryXP">0</strong>
+    </p>
+
+    <p>
+        ☠️ Bounty:
+        <strong id="diaryBounty">0</strong>
+    </p>
+
+<div id="diaryScreen" class="screen" style="display: none;">
+
+    <h1>📖 Diario di Bordo</h1>
+
+    <h2>🏴‍☠️ Capitan Andrea</h2>
+
+    <p>🧡 Chiara — Primo Ufficiale</p>
+
+    <p>🐈 Oscarino — Nostromo di bordo</p>
+
+    <hr>
+
+    <h3>⚓ L'avventura</h3>
+
+    <p>
+        Missioni completate:
+        <strong id="diaryMissions">0 / 25</strong>
+    </p>
+
+    <p>
+        Missioni di Oscarino:
+        <strong id="diaryCatMissions">0 / 6</strong>
+    </p>
+
+    <p>
+        💰 Tesori conquistati:
+        <strong id="diaryTreasures">0 / 7</strong>
+    </p>
+
+    <p>
+        ⚡ XP:
+        <strong id="diaryXP">0</strong>
+    </p>
+
+    <p>
+        ☠️ Bounty:
+        <strong id="diaryBounty">0</strong>
+    </p>
+
+    <hr>
+
+    <h3>📜 Cronache della ciurma</h3>
+
+    <div id="diaryLog"></div>
+
+    <hr>
+
+    <h3>🌊 La fine della rotta</h3>
+
+    <p>
+        Questa rotta si compie qui,<br>
+        ma per te è solo l'inizio.
+    </p>
+
+    <p>
+        La casa è conquistata.<br>
+        Il tesoro è vostro.<br>
+        E questa è soltanto la prima avventura. 🧡
+    </p>
+
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js")
+            .then(function() {
+                console.log("⚓ Service Worker registrato!");
+            })
+            .catch(function(error) {
+                console.error("Errore Service Worker:", error);
+            });
+    }
+</script>
+
+</body>
+
+</html> 
+
