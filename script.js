@@ -19,16 +19,13 @@ function updateCountdown() {
     const difference = questStart - now;
 
     if (difference <= 0) {
+    countdown.textContent =
+        "🏴‍☠️ La rotta è tracciata!";
 
-        countdown.textContent =
-            "🏴‍☠️ La rotta è tracciata!";
+    startButton.disabled = false;
 
-        startButton.disabled = false;
-        startButton.textContent =
-            "Spiegare le vele";
-
-        return;
-    }
+    return;
+}
 
     const days =
         Math.floor(
@@ -80,8 +77,7 @@ let activeCatMissionId =
         localStorage.getItem("activeCatMissionId")
     ) || null;
 
-let hasStarted =
-    localStorage.getItem("hasStarted") === "true";
+let hasStarted = localStorage.getItem("hasStarted") === "true";
 
 
 /* =========================================================
@@ -120,14 +116,19 @@ const missionsList =
 
 
 /* =========================================================
-   SE L'AVVENTURA ERA GIÀ INIZIATA
+   OGNI VOLTA CHE SI APRE L'APP
    ========================================================= */
 
+// L'app riparte sempre dalla schermata iniziale
+
 if (hasStarted) {
-
     welcomeScreen.style.display = "none";
-    homeScreen.style.display = "block";
-
+    adventureScreen.style.display = "block";
+    homeScreen.style.display = "none";
+} else {
+    welcomeScreen.style.display = "block";
+    adventureScreen.style.display = "none";
+    homeScreen.style.display = "none";
 }
 
 
@@ -533,26 +534,22 @@ function updateMissionCounter() {
    ========================================================= */
 
 startButton.addEventListener("click", function() {
-
-    localStorage.setItem(
-        "hasStarted",
-        "true"
-    );
+    localStorage.setItem("hasStarted", "true");
 
     welcomeScreen.style.display = "none";
-
     adventureScreen.style.display = "block";
-
 });
 
 
 continueButton.addEventListener("click", function() {
+    const backgroundMusic = document.getElementById("backgroundMusic");
+
+    backgroundMusic.volume = 0.25;
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.play();
 
     adventureScreen.style.display = "none";
-
     homeScreen.style.display = "block";
-
-
 });
 
 
@@ -1967,19 +1964,54 @@ updateTreasures();
 
 function dailySystemNotification() {
 
+    console.log("🔔 Funzione notifica avviata");
+
     if (!("Notification" in window)) {
+
+        console.log("❌ Notification non supportato");
+
         return;
     }
 
-    if (Notification.permission !== "granted") {
-        return;
-    }
+    console.log(
+        "🔔 Permesso:",
+        Notification.permission
+    );
 
-    new Notification("🏴‍☠️ New Home Quest", {
-        body: "Capitan Andrea, una nuova missione ti attende a bordo!"
-    });
+    navigator.serviceWorker.ready.then(
+        function(registration) {
+
+            console.log(
+                "⚓ Service Worker pronto:",
+                registration
+            );
+
+            registration.showNotification(
+                "🏴‍☠️ New Home Quest",
+                {
+                    body:
+                        "Capitano, la tua missione giornaliera ti aspetta!",
+                    icon: "./icon.png",
+                    badge: "./icon.png"
+                }
+            ).then(function() {
+
+                console.log(
+                    "✅ showNotification eseguito!"
+                );
+
+            }).catch(function(error) {
+
+                console.error(
+                    "❌ Errore showNotification:",
+                    error
+                );
+
+            });
+
+        }
+    );
 }
-
 const notificationButton =
     document.getElementById("notificationButton");
 
@@ -2027,11 +2059,204 @@ notificationButton.addEventListener(
             "🔔 Notifiche attive";
 
 
-        notificationButton.disabled =
-            true;
+        notificationButton.style.display = "none";
 
-
+console.log("🔔 STO PROVANDO A MOSTRARE LA NOTIFICA");
         dailySystemNotification();
 
     }
 );
+
+// =================================================
+// 🐈 NOTIFICA DI OSCARINO
+// =================================================
+
+function oscarinoSystemNotification() {
+
+    console.log("🐈 Funzione Oscarino avviata");
+
+    if (!("Notification" in window)) {
+
+        console.log("❌ Notification non supportato");
+
+        return;
+    }
+
+    console.log(
+        "🔔 Permesso:",
+        Notification.permission
+    );
+
+    console.log(
+        "🐈 Missioni Oscarino completate:",
+        completedCatMissions
+    );
+
+    navigator.serviceWorker.ready.then(
+        function(registration) {
+
+            console.log(
+                "⚓ Service Worker pronto per Oscarino"
+            );
+
+            registration.showNotification(
+                "🐈 Il Nostromo Peloso",
+                {
+                    body:
+                        "Oscarino ha una richiesta per te...",
+                    icon: "./icon.png",
+                    badge: "./icon.png"
+                }
+            ).then(function() {
+
+                console.log(
+                    "✅ Notifica Oscarino inviata!"
+                );
+
+            }).catch(function(error) {
+
+                console.error(
+                    "❌ Errore notifica Oscarino:",
+                    error
+                );
+
+            });
+
+        }
+    );
+}
+
+// =================================================
+// 🐈 PROMEMORIA DI OSCARINO OGNI 5 GIORNI
+// =================================================
+
+const oscarinoReminder =
+    document.getElementById("oscarinoReminder");
+
+const oscarinoReminderText =
+    document.getElementById("oscarinoReminderText");
+
+const oscarinoReminderButton =
+    document.getElementById("oscarinoReminderButton");
+
+
+function checkOscarinoReminder() {
+
+    // Se Oscarino ha completato tutte le missioni,
+    // il promemoria non deve più comparire
+
+    if (
+        completedCatMissions.length ===
+        catMissions.length
+    ) {
+
+        oscarinoReminder.style.display =
+            "none";
+
+        return;
+    }
+
+
+    const today =
+        new Date();
+
+    const lastReminder =
+        localStorage.getItem(
+            "lastOscarinoReminder"
+        );
+
+
+    // Prima volta:
+    // mostra subito il promemoria
+
+    if (!lastReminder) {
+
+        localStorage.setItem(
+            "lastOscarinoReminder",
+            today.toISOString()
+        );
+
+        oscarinoReminder.style.display =
+            "block";
+
+        return;
+    }
+
+
+    const lastDate =
+        new Date(lastReminder);
+
+    const difference =
+        today - lastDate;
+
+    const fiveDays =
+        5 * 24 * 60 * 60 * 1000;
+
+
+    // Se sono passati almeno 5 giorni
+
+    if (difference >= fiveDays) {
+
+        localStorage.setItem(
+            "lastOscarinoReminder",
+            today.toISOString()
+        );
+
+        oscarinoReminder.style.display =
+            "block";
+
+    } else {
+
+        oscarinoReminder.style.display =
+            "none";
+
+    }
+
+}
+
+
+// =================================================
+// 🐈 PULSANTE DEL PROMEMORIA
+// =================================================
+
+oscarinoReminderButton.addEventListener(
+    "click",
+    function() {
+
+        oscarinoReminderText.textContent =
+            "🐈 Oscarino ha deciso che è ora di occuparsi di lui!";
+
+        oscarinoReminderButton.textContent =
+            "🐈 Vai da Oscarino";
+
+        oscarinoReminderButton.onclick =
+            function() {
+
+                oscarinoReminder.style.display =
+                    "none";
+
+                catButton.click();
+
+            };
+
+    }
+);
+
+
+// Avvia il controllo
+
+checkOscarinoReminder();
+
+
+// =================================================
+// 🔔 NASCONDI IL PULSANTE SE LE NOTIFICHE SONO GIÀ ATTIVE
+// =================================================
+
+if (
+    "Notification" in window &&
+    Notification.permission === "granted"
+) {
+
+    notificationButton.style.display =
+        "none";
+}
