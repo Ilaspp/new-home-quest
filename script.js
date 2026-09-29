@@ -1175,109 +1175,6 @@ function updateTreasures() {
 
 
 /* =========================================================
-   TRANSIZIONE FINALE
-   ========================================================= */
-
-const finalTransition =
-    document.getElementById(
-        "finalTransition"
-    );
-
-const fallingTreasures =
-    document.getElementById(
-        "fallingTreasures"
-    );
-
-
-function startFinalTransition() {
-
-    finalTransition.style.display =
-        "block";
-
-
-    /* Puliamo eventuali tesori precedenti */
-
-    fallingTreasures.innerHTML = "";
-
-
-    const emojis = [
-
-        "💰",
-        "💰",
-        "🪙",
-        "🪙",
-        "🪎",
-        "🪎",
-        "✨",
-        "✨",
-        "✨",
-        "🏴‍☠️",
-        "🏴‍☠️",
-        "☠️",
-        "☠️",
-        "☠️",
-        "☠️",
-        "👑",
-        "☠️",
-        "☠️",
-        "☠️",
-        "☠️"
-
-    ];
-
-
-    for (
-        let i = 0;
-        i < 500;
-        i++
-    ) {
-
-        const emoji =
-            document.createElement("div");
-
-
-        emoji.classList.add(
-            "fallingTreasure"
-        );
-
-
-        emoji.textContent =
-            emojis[
-                Math.floor(
-                    Math.random() *
-                    emojis.length
-                )
-            ];
-
-
-        emoji.style.left =
-            Math.random() * 100 + "%";
-
-
-        emoji.style.fontSize =
-            (25 + Math.random() * 40) +
-            "px";
-
-
-        emoji.style.animationDelay =
-            Math.random() * 2.5 + "s";
-
-
-        emoji.style.animationDuration =
-            (2 + Math.random() * 2) +
-            "s";
-
-
-        fallingTreasures.appendChild(
-            emoji
-        );
-
-    }
-
-}
-
-
-/* =========================================================
    CHIUSURA POPUP TESORO
    ========================================================= */
 
@@ -1318,49 +1215,67 @@ closeTreasureButton.addEventListener(
            parte la cascata.
         */
 
-        if (
-            currentTreasure !== "finale" &&
-            allRegularTreasuresUnlocked
-        ) {
+  if (
+    currentTreasure !== "finale" &&
+    allRegularTreasuresUnlocked
+) {
 
-            startFinalTransition();
+    const finalTreasure =
+        treasures.find(function(treasure) {
 
+            return treasure.category === "finale";
 
-            setTimeout(function() {
+        });
 
-                finalTransition.style.display =
-                    "none";
+    if (finalTreasure) {
 
+        setTimeout(function() {
 
-                fallingTreasures.innerHTML =
-                    "";
+            startFinalReveal(finalTreasure);
 
+        }, 500);
 
-                const finalTreasure =
-                    treasures.find(function(treasure) {
-
-                        return (
-                            treasure.category ===
-                            "finale"
-                        );
-
-                    });
-
-
-                if (finalTreasure) {
-
-                    showTreasureOverlay(
-                        finalTreasure
-                    );
-
-                }
-
-            }, 5000);
-
-        }
+    }
+}
 
     }
 );
+
+
+/* =========================================================
+   RIVELAZIONE TESORO FINALE
+   ========================================================= */
+
+function startFinalReveal(finalTreasure) {
+
+    const reveal =
+        document.getElementById("finalReveal");
+
+    const goldFlash =
+        document.getElementById("goldFlash");
+
+    /* Puliamo eventuali animazioni precedenti */
+    reveal.classList.remove("active");
+    goldFlash.classList.remove("active");
+
+    /* Parte la schermata luminosa */
+    setTimeout(function() {
+
+        reveal.classList.add("active");
+        goldFlash.classList.add("active");
+
+    }, 50);
+
+    /* Dopo la luce compare il Tesoro Finale */
+    setTimeout(function() {
+
+        showTreasureOverlay(finalTreasure);
+
+        reveal.classList.remove("active");
+        goldFlash.classList.remove("active");
+
+    }, 2200);
+}
 
 
 /* =========================================================
