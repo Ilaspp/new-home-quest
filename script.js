@@ -552,31 +552,6 @@ continueButton.addEventListener("click", function() {
 
     homeScreen.style.display = "block";
 
-    if (
-        "Notification" in window &&
-        Notification.permission === "default"
-    ) {
-
-        Notification.requestPermission().then(function(permission) {
-
-            if (permission === "granted") {
-
-                console.log("🔔 Notifiche attivate!");
-
-                
-
-            }
-
-        });
-
-    } else if (
-        "Notification" in window &&
-        Notification.permission === "granted"
-    ) {
-
-        dailySystemNotification();
-
-    }
 
 });
 
@@ -1397,11 +1372,7 @@ catButton.addEventListener(
 
     completeCatButton.disabled = true;
 
-    alert(
-        "🐈 Oscarino approva! Hai guadagnato " +
-        mission.xp +
-        " XP."
-    );
+    
 }
 
                 }
@@ -1532,9 +1503,7 @@ missions.forEach(function(mission) {
                 )
             ) {
 
-                alert(
-                    "🏴‍☠️ Questa missione è già stata completata!"
-                );
+                
 
                 return;
 
@@ -1615,11 +1584,7 @@ missions.forEach(function(mission) {
                 true;
 
 
-            alert(
-                "🏴‍☠️ Bottino assicurato! Hai guadagnato " +
-                mission.xp +
-                " XP."
-            );
+    
 
         }
     );
@@ -2015,36 +1980,58 @@ function dailySystemNotification() {
     });
 }
 
+const notificationButton =
+    document.getElementById("notificationButton");
 
-// ===============================
-// 🔔 RICHIESTA PERMESSO
-// ===============================
 
-if (
-    "Notification" in window &&
-    Notification.permission === "default"
-) {
+notificationButton.addEventListener(
+    "click",
+    async function() {
 
-    Notification.requestPermission().then(function(permission) {
+        if (!("Notification" in window)) {
 
-        console.log(
-            "🔔 Permesso notifiche:",
-            permission
-        );
+            notificationButton.textContent =
+                "❌ Notifiche non supportate";
 
-        if (permission === "granted") {
+            return;
+        }
 
-            dailySystemNotification();
+
+        if (Notification.permission === "denied") {
+
+            notificationButton.textContent =
+                "⚠️ Notifiche bloccate";
+
+            return;
+        }
+
+
+        if (Notification.permission === "default") {
+
+            const permission =
+                await Notification.requestPermission();
+
+            if (permission !== "granted") {
+
+                notificationButton.textContent =
+                    "🔕 Notifiche non attivate";
+
+                return;
+
+            }
 
         }
 
-    });
 
-} else if (
-    "Notification" in window &&
-    Notification.permission === "granted"
-) {
+        notificationButton.textContent =
+            "🔔 Notifiche attive";
 
-    console.log("🔔 Notifiche già attive!");
 
-}
+        notificationButton.disabled =
+            true;
+
+
+        dailySystemNotification();
+
+    }
+);
