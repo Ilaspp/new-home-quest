@@ -78,7 +78,8 @@ let activeCatMissionId =
     ) || null;
 
 let hasStarted = localStorage.getItem("hasStarted") === "true";
-
+let diaryUnlocked =
+    localStorage.getItem("diaryUnlocked") === "true";
 
 /* =========================================================
    SCHERMATE
@@ -95,6 +96,15 @@ const adventureScreen =
 
 const homeScreen =
     document.getElementById("homeScreen");
+
+const diaryScreen =
+    document.getElementById("diaryScreen");
+
+const diaryButton =
+    document.getElementById("diaryButton");
+
+const closeDiaryButton =
+    document.getElementById("closeDiaryButton");
 
 const missionsButton =
     document.getElementById("missionsButton");
@@ -249,6 +259,148 @@ function updateStats() {
 
 updateStats();
 
+/* =========================================================
+   DIARIO DI BORDO
+   ========================================================= */
+
+function updateDiary() {
+
+    const diaryCompletionDate =
+        document.getElementById(
+            "diaryCompletionDate"
+        );
+
+    const diaryMissions =
+        document.getElementById(
+            "diaryMissions"
+        );
+
+    const diaryCatMissions =
+        document.getElementById(
+            "diaryCatMissions"
+        );
+
+    const diaryTreasures =
+        document.getElementById(
+            "diaryTreasures"
+        );
+
+    const diaryXP =
+        document.getElementById(
+            "diaryXP"
+        );
+
+    const diaryBounty =
+        document.getElementById(
+            "diaryBounty"
+        );
+
+    const diaryLog =
+        document.getElementById(
+            "diaryLog"
+        );
+
+
+    const completionDate =
+        new Date().toLocaleDateString(
+            "it-IT",
+            {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    diaryCompletionDate.textContent =
+        completionDate;
+
+
+    diaryMissions.textContent =
+        completedMissions.length +
+        " / " +
+        missions.length;
+
+
+    diaryCatMissions.textContent =
+        completedCatMissions.length +
+        " / " +
+        catMissions.length;
+
+
+    diaryTreasures.textContent =
+        previouslyUnlockedTreasures.length +
+        " / 7";
+
+
+    diaryXP.textContent =
+        xp;
+
+
+    diaryBounty.textContent =
+        "฿ " +
+        (xp * 10).toLocaleString(
+            "it-IT"
+        );
+
+
+    diaryLog.innerHTML = `
+        <p>⚓ La ciurma ha completato tutte le missioni.</p>
+
+        <p>🗺️ Il viaggio nella nuova casa è giunto al termine.</p>
+
+        <p>🐈 Oscarino ha supervisionato ogni fase dell'impresa.</p>
+
+        <p>💰 Tutti i tesori sono stati conquistati.</p>
+
+        <p>🏠 La nuova casa è finalmente vostra.</p>
+    `;
+
+}
+
+diaryButton.addEventListener(
+    "click",
+    function() {
+
+        missionsScreen.style.display =
+            "none";
+
+        treasuresScreen.style.display =
+            "none";
+
+        catMission.style.display =
+            "none";
+
+        homeScreen.style.display =
+            "none";
+
+        diaryScreen.style.display =
+            "block";
+
+        updateDiary();
+
+    }
+);
+
+closeDiaryButton.addEventListener(
+    "click",
+    function() {
+
+        diaryScreen.style.display =
+            "none";
+
+        homeScreen.style.display =
+            "block";
+
+    }
+);
+
+if (diaryUnlocked) {
+
+    diaryButton.style.display =
+        "block";
+
+}
 
 /* =========================================================
    MISSIONI
@@ -1150,6 +1302,10 @@ function updateTreasures() {
    CHIUSURA POPUP TESORO
    ========================================================= */
 
+/* =========================================================
+   CHIUSURA POPUP TESORO
+   ========================================================= */
+
 closeTreasureButton.addEventListener(
     "click",
     function() {
@@ -1161,6 +1317,60 @@ closeTreasureButton.addEventListener(
         treasureOverlay.style.display =
             "none";
 
+
+        /* =========================================
+           TESORO FINALE
+           ========================================= */
+
+        if (currentTreasure === "finale") {
+
+            /* Il Diario viene sbloccato */
+
+            localStorage.setItem(
+                "diaryUnlocked",
+                "true"
+            );
+
+
+            /* Mostra il bottone Diario */
+
+            diaryButton.style.display =
+                "block";
+
+
+            /* Nasconde le altre schermate */
+
+            missionsScreen.style.display =
+                "none";
+
+            treasuresScreen.style.display =
+                "none";
+
+            catMission.style.display =
+                "none";
+
+            homeScreen.style.display =
+                "none";
+
+
+            /* Mostra il Diario */
+
+            diaryScreen.style.display =
+                "block";
+
+
+            /* Compila il Diario */
+
+            updateDiary();
+
+
+            return;
+        }
+
+
+        /* =========================================
+           TESORI NORMALI
+           ========================================= */
 
         const allRegularTreasuresUnlocked =
             treasures
@@ -1184,31 +1394,35 @@ closeTreasureButton.addEventListener(
         /*
            Se abbiamo appena conquistato
            tutti i 6 tesori normali,
-           parte la cascata.
+           parte la rivelazione finale.
         */
 
-  if (
-    currentTreasure !== "finale" &&
-    allRegularTreasuresUnlocked
-) {
+        if (
+            currentTreasure !== "finale" &&
+            allRegularTreasuresUnlocked
+        ) {
 
-    const finalTreasure =
-        treasures.find(function(treasure) {
+            const finalTreasure =
+                treasures.find(function(treasure) {
 
-            return treasure.category === "finale";
+                    return treasure.category === "finale";
 
-        });
+                });
 
-    if (finalTreasure) {
 
-        setTimeout(function() {
+            if (finalTreasure) {
 
-            startFinalReveal(finalTreasure);
+                setTimeout(function() {
 
-        }, 500);
+                    startFinalReveal(
+                        finalTreasure
+                    );
 
-    }
-}
+                }, 500);
+
+            }
+
+        }
 
     }
 );
@@ -1958,7 +2172,7 @@ reminderButton.addEventListener(
 updateTreasures();
 
 
-// ===============================
+/* ===============================
 // 🔔 NOTIFICHE
 // ===============================
 
@@ -2012,6 +2226,7 @@ function dailySystemNotification() {
         }
     );
 }
+
 const notificationButton =
     document.getElementById("notificationButton");
 
@@ -2065,7 +2280,7 @@ console.log("🔔 STO PROVANDO A MOSTRARE LA NOTIFICA");
         dailySystemNotification();
 
     }
-);
+);*/
 
 // =================================================
 // 🐈 NOTIFICA DI OSCARINO
@@ -2247,16 +2462,3 @@ oscarinoReminderButton.addEventListener(
 
 checkOscarinoReminder();
 
-
-// =================================================
-// 🔔 NASCONDI IL PULSANTE SE LE NOTIFICHE SONO GIÀ ATTIVE
-// =================================================
-
-if (
-    "Notification" in window &&
-    Notification.permission === "granted"
-) {
-
-    notificationButton.style.display =
-        "none";
-}

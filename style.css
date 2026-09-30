@@ -5,10 +5,14 @@ body {
     min-height: 100vh;
 
     background-image: url("img1.jpg");
-    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 
     font-family: "Trebuchet MS", times, serif;
-}
+    color: black;
+}   
 
 h1 {                                       /*h1 = selettore; font-size = regola*/
     font-size: 52px;
@@ -927,4 +931,31 @@ button {
     }
 }
 
+.diaryButtonContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 0px;
+}
 
+#adventureScreen p {
+    margin: 5px 0;
+}
+#adventureScreen p:first-of-type {
+    margin-bottom: 15px;
+}
+#adventureScreen button {
+    margin-top: 25px;
+}
+
+#diaryButton {
+    font-weight: bold;
+}
+#catButton {
+    font-weight: bold;
+}
+#missionButton {
+    font-weight: bold;
+}
+#treasureButton {
+    font-weight: bold;
+}
