@@ -7,53 +7,138 @@
    DATA DI INIZIO DELLA QUEST
    ========================================================= */
 
-const questStart = new Date("2026-09-24T18:00:00");
+let questStart = null;
+
+const savedQuestStart =
+    localStorage.getItem("questStart");
+
+if (savedQuestStart) {
+    questStart = new Date(savedQuestStart);
+}
 
 const startButton = document.getElementById("startButton");
+const questDate =
+    document.getElementById("questDate");
+const departureSettings =
+    document.getElementById("departureSettings");
+
+const setQuestDateButton =
+    document.getElementById("setQuestDateButton");
+setQuestDateButton.addEventListener(
+    "click",
+    function() {
+
+        if (!questDate.value) {
+            alert("🏴‍☠️ Scegli prima la data di partenza!");
+            return;
+        }
+
+        questStart =
+            new Date(questDate.value);
+
+        localStorage.setItem(
+            "questStart",
+            questStart.toISOString()
+        );
+
+        updateCountdown();
+    }
+);
 const countdown = document.getElementById("countdown");
 
 
 function updateCountdown() {
 
     const now = new Date();
-    const difference = questStart - now;
 
+    // Nessuna data ancora scelta
+    if (!questStart) {
+
+    
+        startButton.style.display =
+            "none";
+
+        departureSettings.style.display =
+            "flex";
+
+        return;
+    }
+
+    const difference =
+        questStart - now;
+
+    // La partenza è arrivata
     if (difference <= 0) {
-    countdown.textContent =
-        "🏴‍☠️ La rotta è tracciata!";
 
-    startButton.disabled = false;
+        countdown.textContent =
+            "🏴‍☠️ La rotta è tracciata!";
 
-    return;
-}
+        departureSettings.style.display =
+            "none";
 
+        startButton.style.display =
+            "block";
+
+        startButton.disabled =
+            false;
+
+        startButton.textContent =
+            "🏴‍☠️ Spiegare le vele";
+
+        return;
+    }
+
+    // Data impostata: nascondiamo
+    // selettore e pulsante
+    departureSettings.style.display =
+        "none";
+
+    startButton.style.display =
+        "none";
+
+    // Calcolo del tempo rimanente
     const days =
         Math.floor(
-            difference / (1000 * 60 * 60 * 24)
+            difference /
+            (1000 * 60 * 60 * 24)
         );
 
     const hours =
         Math.floor(
-            (difference / (1000 * 60 * 60)) % 24
+            (difference /
+            (1000 * 60 * 60)) % 24
         );
 
     const minutes =
         Math.floor(
-            (difference / (1000 * 60)) % 60
+            (difference /
+            (1000 * 60)) % 60
+        );
+
+    const seconds =
+        Math.floor(
+            (difference /
+            1000) % 60
         );
 
     countdown.textContent =
         "⏳ Mancano " +
-        days + " giorni, " +
-        hours + " ore e " +
-        minutes + " minuti";
+        days +
+        " giorni, " +
+        hours +
+        " ore, " +
+        minutes +
+        " minuti e " +
+        seconds +
+        " secondi";
 }
 
 
 updateCountdown();
 
-setInterval(updateCountdown, 60000);
+setInterval(updateCountdown, 1000);
 
+updateCountdown()
 
 /* =========================================================
    LOCAL STORAGE
